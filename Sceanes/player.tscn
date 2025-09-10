@@ -1,0 +1,94 @@
+[gd_scene load_steps=9 format=3 uid="uid://dlvvxp17d3u6g"]
+
+[ext_resource type="Script" uid="uid://dijw0rib7myyn" path="res://Scripts/player.gd" id="1_rcu0a"]
+[ext_resource type="Texture2D" uid="uid://d1l5p8o4aci03" path="res://Assets/Transparent/Tilemap/tilemap_packed.png" id="1_wnxct"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rcu0a"]
+atlas = ExtResource("1_wnxct")
+region = Rect2(0, 56, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5y3eo"]
+atlas = ExtResource("1_wnxct")
+region = Rect2(24, 56, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bc0vw"]
+atlas = ExtResource("1_wnxct")
+region = Rect2(16, 56, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yaga4"]
+atlas = ExtResource("1_wnxct")
+region = Rect2(8, 56, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5y3eo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rcu0a")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5y3eo")
+}],
+"loop": true,
+"name": &"jump_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bc0vw")
+}],
+"loop": true,
+"name": &"jump_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yaga4")
+}],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bc0vw"]
+size = Vector2(6, 7.75)
+
+[node name="Player" type="CharacterBody2D"]
+collision_mask = 33
+script = ExtResource("1_rcu0a")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_5y3eo")
+animation = &"run"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0.25)
+shape = SubResource("RectangleShape2D_bc0vw")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(10, 10)
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(0, 0.5)
+collision_mask = 30
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+visible = false
+position = Vector2(0, -0.375)
+shape = SubResource("RectangleShape2D_bc0vw")
+
+[node name="JumpTimeBuffer" type="Timer" parent="."]
+wait_time = 0.05
+one_shot = true
+
+[node name="CoyoteTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
