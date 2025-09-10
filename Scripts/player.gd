@@ -91,7 +91,7 @@ func apply_knockback(direction: Vector2, force: float, knockback_duration: float
 func handle_knockback(delta: float) -> void:
 	if knockback_timer > 0.0:
 		velocity.x = knockback.x
-		velocity.y += gravity * delta  # Gravity läuft weiter
+		velocity.y += knockback.y  # Gravity läuft weiter
 		knockback_timer -= delta
 		if knockback_timer <= 0.0:
 			knockback = Vector2.ZERO
@@ -105,11 +105,14 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 			
 			# Knockback-Richtung: aus Bewegungsrichtung
 			var dir_x = -sign(velocity.x)
+			var dir_y = -sign(velocity.y)
 			if dir_x == 0:
-				dir_x = -1  # fallback: nach links schubsen
-
-			var knock_dir = Vector2(dir_x, -0.5).normalized()
-			apply_knockback(knock_dir, 150.0, 0.2)
+				dir_x = -1  
+			if dir_y == 0:
+				dir_y = 0  
+				
+			var knock_dir = Vector2(dir_x, dir_y).normalized()
+			apply_knockback(knock_dir, 150.0, 0.02)
 			return
 		if body.name == "Door" && hasKey == false:
 			print("Needkey")
