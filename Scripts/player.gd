@@ -3,6 +3,7 @@ extends CharacterBody2D
 @export var speed: int = 50
 @export var acceleration: int = 5
 @export var jump_speed: int = -speed * 2.5
+@export var jump_amout: int = 2
 @export var gravity: int = speed * 5
 @export var down_gravity_factor: float = 1.5
 @export var health: int = 3
@@ -10,6 +11,8 @@ extends CharacterBody2D
 @onready var animation: AnimatedSprite2D = $AnimatedSprite2D
 @onready var jump_time_buffer: Timer = $JumpTimeBuffer
 @onready var coyote_timer: Timer = $CoyoteTimer
+@onready var h_container: HBoxContainer = $HUD/Control/HBoxContainer
+@onready var heart_sceane: PackedScene = preload("res://Sceanes/heart.tscn")
 
 enum State {IDLE,RUN,JUMP,DOWN}
 var current_state: State = State.IDLE
@@ -18,6 +21,19 @@ var hasKey: bool = false
 
 var knockback: Vector2 = Vector2.ZERO
 var knockback_timer: float = 0.0
+
+var hearts_list: Array[TextureRect]
+var jumps_left: int
+
+func _ready() -> void:
+	jumps_left = jump_amout
+	for heart in health:
+		var heart_temp = heart_sceane.instantiate()
+		hearts_list.append(heart_temp)
+		h_container.add_child(heart_temp)
+	
+	# Connect the coyote timer's timeout signal to our new function
+	coyote_timer.timeout.connect(_on_coyote_timer_timeout)
 
 func _physics_process(delta: float) -> void:
 	handle_input()
@@ -40,16 +56,17 @@ func handle_input() -> void:
 		velocity.x = move_toward(velocity.x, speed * direction, acceleration)
 
 func update_movement(delta: float) -> void:
-	if (is_on_floor() || coyote_timer.time_left > 0) && jump_time_buffer.time_left > 0:
+	if jump_time_buffer.time_left > 0 and jumps_left > 0:
 		velocity.y = jump_speed
 		current_state = State.JUMP
+		jumps_left -= 1
 		jump_time_buffer.stop()
 		coyote_timer.stop()
 		
-	if current_state == State.JUMP:
-		velocity.y += gravity * delta
-	else:
+	if velocity.y > 0:
 		velocity.y += gravity * down_gravity_factor * delta
+	else:
+		velocity.y += gravity * delta
 	
 func update_state() -> void:
 	match current_state:
@@ -59,7 +76,7 @@ func update_state() -> void:
 		State.RUN:
 			if velocity.x == 0:
 				current_state = State.IDLE
-			if not is_on_floor() && velocity.y > 0:
+			if not is_on_floor() and velocity.y > 0:
 				current_state = State.DOWN
 				coyote_timer.start()
 		
@@ -67,11 +84,11 @@ func update_state() -> void:
 			current_state = State.DOWN
 		
 		State.DOWN when is_on_floor():
+			jumps_left = jump_amout
 			if velocity.x == 0:
 				current_state = State.IDLE
 			else:
 				current_state = State.RUN
-
 
 func update_animation() -> void:
 	if velocity.x != 0:
@@ -82,8 +99,7 @@ func update_animation() -> void:
 		State.RUN: animation.play("run")
 		State.JUMP: animation.play("jump_up")
 		State.DOWN: animation.play("jump_down")
-	
-
+		
 func apply_knockback(direction: Vector2, force: float, knockback_duration: float) -> void:
 	knockback = direction * force
 	knockback_timer = knockback_duration
@@ -91,25 +107,24 @@ func apply_knockback(direction: Vector2, force: float, knockback_duration: float
 func handle_knockback(delta: float) -> void:
 	if knockback_timer > 0.0:
 		velocity.x = knockback.x
-		velocity.y += knockback.y  # Gravity läuft weiter
+		velocity.y += knockback.y
 		knockback_timer -= delta
 		if knockback_timer <= 0.0:
 			knockback = Vector2.ZERO
 
+func update_heart_dispaly():
+	for i in range(hearts_list.size()):
+		if i >= health:
+			hearts_list[i].get_child(0).play("noHeart")  
+
 func _on_area_2d_body_entered(body: Node2D) -> void:
-	if body is TileMapLayer: # TileMap collision bodies sind StaticBody2D
+	if body is TileMapLayer:
 		if body.name == "Enemie":
-			# Spieler trifft Spike
 			health -= 1
-			print("Ouch! Health:", health)
+			update_heart_dispaly()
 			
-			# Knockback-Richtung: aus Bewegungsrichtung
-			var dir_x = -sign(velocity.x)
+			var dir_x = -sign(velocity.x) if velocity.x != 0 else -1
 			var dir_y = -sign(velocity.y)
-			if dir_x == 0:
-				dir_x = -1  
-			if dir_y == 0:
-				dir_y = 0  
 				
 			var knock_dir = Vector2(dir_x, dir_y).normalized()
 			apply_knockback(knock_dir, 150.0, 0.02)
@@ -123,3 +138,10 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	if body is Door && hasKey:
 		body.open()
 		hasKey = false
+
+# This new function is called when the CoyoteTimer runs out.
+func _on_coyote_timer_timeout() -> void:
+	# If the player just fell off a ledge (jumps_left is at max)
+	# and didn't use the coyote time jump, they lose that ground jump.
+	if jumps_left == jump_amout:
+		jumps_left -= 1

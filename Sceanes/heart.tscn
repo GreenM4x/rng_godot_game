@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3 uid="uid://cd8bdjdet78aw"]
+
+[ext_resource type="Texture2D" uid="uid://d1l5p8o4aci03" path="res://Assets/Transparent/Tilemap/tilemap_packed.png" id="1_da2nn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_da2nn"]
+atlas = ExtResource("1_da2nn")
+region = Rect2(96, 64, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_51ufu"]
+atlas = ExtResource("1_da2nn")
+region = Rect2(112, 64, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_emmr4"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_da2nn")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_51ufu")
+}],
+"loop": true,
+"name": &"noHeart",
+"speed": 5.0
+}]
+
+[node name="Heart" type="TextureRect"]
+texture_filter = 1
+custom_minimum_size = Vector2(8, 8)
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_emmr4")
+animation = &"noHeart"
+autoplay = "default"
