@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=4 uid="uid://wb5ijnojrm3t"]
+[gd_scene load_steps=7 format=4 uid="uid://wb5ijnojrm3t"]
 
 [ext_resource type="Texture2D" uid="uid://d1l5p8o4aci03" path="res://Assets/Transparent/Tilemap/tilemap_packed.png" id="1_0oo0a"]
 [ext_resource type="PackedScene" uid="uid://dlvvxp17d3u6g" path="res://Sceanes/player.tscn" id="2_4d8t8"]
+[ext_resource type="PackedScene" uid="uid://dnoknmb4ejpe7" path="res://Sceanes/door.tscn" id="2_8o2tr"]
 [ext_resource type="PackedScene" uid="uid://bwjruys5qx880" path="res://Sceanes/key.tscn" id="3_fnhm6"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4d8t8"]
@@ -105,8 +106,6 @@ texture_region_size = Vector2i(8, 8)
 14:4/0 = 0
 14:5/0 = 0
 13:5/0 = 0
-13:6/0 = 0
-13:6/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
 13:4/0 = 0
 12:3/0 = 0
 12:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(4, -4, 4, 4, -4, 4, -4, -4)
@@ -126,29 +125,15 @@ texture_region_size = Vector2i(8, 8)
 13:3/0 = 0
 13:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4)
 14:1/0 = 0
-14:6/0 = 0
-14:6/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
-14:7/0 = 0
-14:7/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
 14:8/0 = 0
 14:9/0 = 0
 13:9/0 = 0
 12:9/0 = 0
 12:8/0 = 0
 13:8/0 = 0
-13:7/0 = 0
-13:7/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
 11:8/0 = 0
-11:7/0 = 0
-11:7/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
-11:6/0 = 0
-11:6/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
 11:5/0 = 0
 11:5/0/physics_layer_0/polygon_0/points = PackedVector2Array(4, -4, 4, 4, -4, 4, -4, -4)
-12:7/0 = 0
-12:7/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
-12:6/0 = 0
-12:6/0/physics_layer_1/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
 12:5/0 = 0
 10:7/0 = 0
 9:7/0 = 0
@@ -212,6 +197,13 @@ texture_region_size = Vector2i(8, 8)
 5:5/0 = 0
 1:6/0 = 0
 10:6/0 = 0
+11:6/size_in_atlas = Vector2i(2, 2)
+11:6/animation_columns = 2
+11:6/0 = 0
+11:6/0/texture_origin = Vector2i(-4, 4)
+13:6/size_in_atlas = Vector2i(2, 2)
+13:6/0 = 0
+13:6/0/texture_origin = Vector2i(-4, 4)
 
 [sub_resource type="TileSet" id="TileSet_fnhm6"]
 tile_size = Vector2i(8, 8)
@@ -247,15 +239,12 @@ texture_filter = 1
 tile_map_data = PackedByteArray("AAASAAQAAAAAAAUAAAARAAQAAAAAAAUAAAAQAAQAAAAAAAUAAAA=")
 tile_set = SubResource("TileSet_fnhm6")
 
-[node name="Door" type="TileMapLayer" parent="Layers"]
-z_index = -1
-texture_filter = 1
-tile_map_data = PackedByteArray("AAAEAP//AAABAAMAAAAXAAMAAAALAAYAAAAXAAQAAAALAAcAAAAYAAMAAAAMAAYAAAAYAAQAAAAMAAcAAAA=")
-tile_set = SubResource("TileSet_fnhm6")
-
 [node name="Player" parent="." instance=ExtResource("2_4d8t8")]
 position = Vector2(27, -4)
 collision_mask = 32
 
 [node name="Key" parent="." instance=ExtResource("3_fnhm6")]
 position = Vector2(196, -55)
+
+[node name="Door" parent="." instance=ExtResource("2_8o2tr")]
+position = Vector2(196, 32)

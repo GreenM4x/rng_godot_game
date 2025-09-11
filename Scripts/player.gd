@@ -114,14 +114,12 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 			var knock_dir = Vector2(dir_x, dir_y).normalized()
 			apply_knockback(knock_dir, 150.0, 0.02)
 			return
-		if body.name == "Door" && hasKey == false:
-			print("Needkey")
-			return
-		if body.name == "Door" && hasKey == true:
-			print("Yey")
-			return
 
-	if body is key:
+	if body is Key:
 		print("key is pickedup")
 		hasKey = true
 		body.pickUp()
+
+	if body is Door && hasKey:
+		body.open()
+		hasKey = false
