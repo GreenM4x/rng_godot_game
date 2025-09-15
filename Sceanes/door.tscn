@@ -1,13 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://dnoknmb4ejpe7"]
+[gd_scene load_steps=7 format=3 uid="uid://dnoknmb4ejpe7"]
 
 [ext_resource type="Texture2D" uid="uid://d1l5p8o4aci03" path="res://Assets/Transparent/Tilemap/tilemap_packed.png" id="1_femh5"]
 [ext_resource type="Script" uid="uid://cgolfwkugp143" path="res://Scripts/door.gd" id="1_tg4l5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tg4l5"]
-atlas = ExtResource("1_femh5")
-region = Rect2(88, 48, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gwpwy"]
 atlas = ExtResource("1_femh5")
 region = Rect2(88, 48, 16, 16)
 
@@ -26,9 +22,6 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gwpwy")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_agwxo")
 }],
@@ -52,3 +45,8 @@ autoplay = "default"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_hdke6")
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

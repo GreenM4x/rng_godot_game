@@ -9,10 +9,14 @@ extends CharacterBody2D
 @export var health: int = 3
 
 @onready var animation: AnimatedSprite2D = $AnimatedSprite2D
-@onready var jump_time_buffer: Timer = $JumpTimeBuffer
-@onready var coyote_timer: Timer = $CoyoteTimer
 @onready var h_container: HBoxContainer = $HUD/Control/HBoxContainer
 @onready var heart_sceane: PackedScene = preload("res://Sceanes/heart.tscn")
+
+#Timer 
+@onready var jump_time_buffer: Timer = $JumpTimeBuffer
+@onready var coyote_timer: Timer = $CoyoteTimer
+@onready var timer: Timer = $Timer
+
 
 enum State {IDLE,RUN,JUMP,DOWN}
 var current_state: State = State.IDLE
@@ -131,13 +135,14 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 			return
 
 	if body is Key:
-		print("key is pickedup")
+		print("key is pickedup") #ToDo Key Pickup display
 		hasKey = true
 		body.pickUp()
 
 	if body is Door && hasKey:
 		body.open()
 		hasKey = false
+		timer.start()
 
 # This new function is called when the CoyoteTimer runs out.
 func _on_coyote_timer_timeout() -> void:
@@ -145,3 +150,8 @@ func _on_coyote_timer_timeout() -> void:
 	# and didn't use the coyote time jump, they lose that ground jump.
 	if jumps_left == jump_amout:
 		jumps_left -= 1
+
+
+func _on_timer_timeout() -> void:
+	scale *= 0.9 # shrink by 10% each second
+	timer.start() # restart if you want continuous shrinking
