@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0rwtm4c5piuq"]
+
+[ext_resource type="Texture2D" uid="uid://d1l5p8o4aci03" path="res://Assets/Transparent/Tilemap/tilemap_packed.png" id="1_3iuh1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vlyxa"]
+size = Vector2(24, 8)
+
+[node name="Platform" type="AnimatableBody2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_3iuh1")
+region_enabled = true
+region_rect = Rect2(24, 24, 24, 8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_vlyxa")

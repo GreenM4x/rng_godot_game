@@ -8,7 +8,9 @@ extends CharacterBody2D
 @export var down_gravity_factor: float = 1.5
 @export var health: int = 3
 
+
 @onready var animation: AnimatedSprite2D = $AnimatedSprite2D
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var h_container: HBoxContainer = $HUD/Control/HBoxContainer
 @onready var heart_sceane: PackedScene = preload("res://Sceanes/heart.tscn")
 
@@ -141,8 +143,8 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 
 	if body is Door && hasKey:
 		body.open()
+		animation_player.play("go_in_door")
 		hasKey = false
-		timer.start()
 
 # This new function is called when the CoyoteTimer runs out.
 func _on_coyote_timer_timeout() -> void:
@@ -150,8 +152,3 @@ func _on_coyote_timer_timeout() -> void:
 	# and didn't use the coyote time jump, they lose that ground jump.
 	if jumps_left == jump_amout:
 		jumps_left -= 1
-
-
-func _on_timer_timeout() -> void:
-	scale *= 0.9 # shrink by 10% each second
-	timer.start() # restart if you want continuous shrinking
