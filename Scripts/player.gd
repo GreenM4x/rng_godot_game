@@ -9,12 +9,12 @@ extends CharacterBody2D
 @export var down_gravity_factor: float = 1.5
 @export var health: int = 3
 
-
 @onready var animation: AnimatedSprite2D = $AnimatedSprite2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var h_container: HBoxContainer = $HUD/Control/HBoxContainer
 @onready var heart_sceane: PackedScene = preload("res://Sceanes/heart.tscn")
 @onready var spawnpoint: Node2D = $"../Spawnpoint"
+@onready var counter: Label = $HUD/Control/Counter
 
 #Timer 
 @onready var jump_time_buffer: Timer = $JumpTimeBuffer
@@ -34,6 +34,8 @@ var current_health: int = health
 var hearts_list: Array[TextureRect]
 var jumps_left: int
 
+var total_time: float = 0
+
 func _ready() -> void:
 	spawnIn()
 	jumps_left = jump_amout
@@ -49,6 +51,7 @@ func _physics_process(delta: float) -> void:
 	handle_input()
 	handle_knockback(delta)
 	update_movement(delta)
+	update_timer(delta)
 	update_state()
 	update_animation()
 	move_and_slide()
@@ -57,6 +60,8 @@ func _physics_process(delta: float) -> void:
 func spawnIn() -> void:
 	current_health = health
 	global_position = spawnpoint.global_position
+	total_time = 0
+	timer.start()
 
 func handle_input() -> void:
 	if Input.is_action_just_pressed("jump"):
@@ -166,3 +171,13 @@ func _on_coyote_timer_timeout() -> void:
 	# and didn't use the coyote time jump, they lose that ground jump.
 	if jumps_left == jump_amout:
 		jumps_left -= 1
+
+
+func update_timer(delta: float) -> void:
+	total_time += delta
+
+	var minutes = int(total_time / 60)
+	var seconds = int(total_time) % 60
+	var milliseconds = int((total_time - int(total_time)) * 1000)
+
+	counter.text = "%02d:%02d:%02d" % [minutes, seconds, milliseconds]

@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://dlvvxp17d3u6g"]
+[gd_scene load_steps=13 format=3 uid="uid://dlvvxp17d3u6g"]
 
 [ext_resource type="Script" uid="uid://dijw0rib7myyn" path="res://Scripts/player.gd" id="1_rcu0a"]
 [ext_resource type="Texture2D" uid="uid://d1l5p8o4aci03" path="res://Assets/Transparent/Tilemap/tilemap_packed.png" id="1_wnxct"]
+[ext_resource type="FontFile" uid="uid://d2g3ybpvbnjtd" path="res://Assets/Fonts/Minecraft.ttf" id="3_5y3eo"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rcu0a"]
 atlas = ExtResource("1_wnxct")
@@ -185,8 +186,18 @@ offset_top = 5.0
 offset_right = 61.0
 offset_bottom = 13.0
 
+[node name="Counter" type="Label" parent="HUD/Control"]
+layout_mode = 0
+offset_left = 163.33333
+offset_top = 4.666667
+offset_right = 225.33333
+offset_bottom = 20.666668
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_5y3eo")
+theme_override_font_sizes/font_size = 16
+text = "00:00:00"
+
 [node name="Timer" type="Timer" parent="."]
-wait_time = 0.1
 
 [node name="JumpTimeBuffer" type="Timer" parent="."]
 wait_time = 0.05
@@ -202,3 +213,4 @@ libraries = {
 }
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

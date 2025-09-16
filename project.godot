@@ -56,3 +56,7 @@ interact={
 2d_physics/layer_4="Door"
 2d_physics/layer_5="Collectable"
 2d_physics/layer_6="World"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
