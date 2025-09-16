@@ -237,3 +237,6 @@ tile_set = SubResource("TileSet_b4ynp")
 
 [node name="Player" parent="." instance=ExtResource("2_uhev8")]
 position = Vector2(10, -4)
+
+[node name="Spawnpoint" type="Node2D" parent="."]
+position = Vector2(10, -4)

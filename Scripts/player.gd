@@ -1,8 +1,9 @@
 extends CharacterBody2D
 
+
 @export var speed: int = 50
 @export var acceleration: int = 5
-@export var jump_speed: int = -speed * 2.5
+@export var jump_speed: float = -speed * 2.5
 @export var jump_amout: int = 2
 @export var gravity: int = speed * 5
 @export var down_gravity_factor: float = 1.5
@@ -13,6 +14,7 @@ extends CharacterBody2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var h_container: HBoxContainer = $HUD/Control/HBoxContainer
 @onready var heart_sceane: PackedScene = preload("res://Sceanes/heart.tscn")
+@onready var spawnpoint: Node2D = $"../Spawnpoint"
 
 #Timer 
 @onready var jump_time_buffer: Timer = $JumpTimeBuffer
@@ -28,12 +30,14 @@ var hasKey: bool = false
 var knockback: Vector2 = Vector2.ZERO
 var knockback_timer: float = 0.0
 
+var current_health: int = health
 var hearts_list: Array[TextureRect]
 var jumps_left: int
 
 func _ready() -> void:
+	spawnIn()
 	jumps_left = jump_amout
-	for heart in health:
+	for heart in current_health:
 		var heart_temp = heart_sceane.instantiate()
 		hearts_list.append(heart_temp)
 		h_container.add_child(heart_temp)
@@ -49,6 +53,10 @@ func _physics_process(delta: float) -> void:
 	update_animation()
 	move_and_slide()
 	
+
+func spawnIn() -> void:
+	current_health = health
+	global_position = spawnpoint.global_position
 
 func handle_input() -> void:
 	if Input.is_action_just_pressed("jump"):
@@ -120,13 +128,19 @@ func handle_knockback(delta: float) -> void:
 
 func update_heart_dispaly():
 	for i in range(hearts_list.size()):
-		if i >= health:
-			hearts_list[i].get_child(0).play("noHeart")  
+		if i >= current_health:
+			hearts_list[i].get_child(0).play("noHeart")
+		else:
+			hearts_list[i].get_child(0).play("default")
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if body is TileMapLayer:
 		if body.name == "Enemie":
-			health -= 1
+			current_health -= 1
+			if current_health <= 0:
+				spawnIn()
+				update_heart_dispaly()
+				return
 			update_heart_dispaly()
 			
 			var dir_x = -sign(velocity.x) if velocity.x != 0 else -1
